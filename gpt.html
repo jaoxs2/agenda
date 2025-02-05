@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Escolar Interativa</title>
+    <style>
+        :root {
+            --bg-light: #e0f7fa;
+            --text-light: #333;
+            --primary-color: #00796b;
+            --hover-color: #80cbc4;
+            --highlight-interval: #ffeb3b;
+            --highlight-lunch: #ff7043;
+            --highlight-interval-blue: #1e4ad9;
+            --portao-bg: #314212;
+            --bg-dark: #121212;
+            --text-dark: #f5f5f5;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .dark-mode {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .agenda-container {
+            max-width: 100%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: auto;
+        }
+
+        .dark-mode .agenda-container {
+            background: #1e1e1e;
+            color: var(--text-dark);
+        }
+
+        h1 {
+            color: var(--primary-color);
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            font-size: 1.1em;
+        }
+
+        .agenda {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: #ffffff;
+            transition: background-color 0.3s;
+        }
+
+        .dark-mode .agenda {
+            background-color: #252525;
+        }
+
+        .agenda th, .agenda td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .agenda th, .dark-mode .agenda td {
+            border: 1px solid #444;
+        }
+
+        .portao {
+            background-color: var(--portao-bg) !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        .intervalo {
+            background-color: var(--highlight-interval) !important;
+            font-weight: bold;
+        }
+
+        .almoco {
+            background-color: var(--highlight-lunch) !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        .intervalo-azul {
+            background-color: var(--highlight-interval-blue) !important;
+            color: white;
+            font-weight: bold;
+        }
+
+        .agenda tr:nth-child(even) {
+            background-color: #f1f8e9;
+        }
+
+        .dark-mode .agenda tr:nth-child(even) {
+            background-color: #333;
+        }
+
+        .agenda th:hover, .agenda td:hover {
+            background-color: var(--hover-color);
+            border: 1px solid transparent;
+        }
+
+        @media (max-width: 768px) {
+            .agenda {
+                font-size: 0.8em;
+            }
+
+            .agenda th, .agenda td {
+                padding: 8px;
+            }
+
+            .header {
+                font-size: 1em;
+            }
+
+            .agenda-container {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .agenda th, .agenda td {
+                padding: 5px;
+                font-size: 0.7em;
+            }
+        }
+
+        .toggle-mode {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--primary-color);
+            transition: color 0.3s;
+        }
+
+        .dark-mode .toggle-mode {
+            color: #f5f5f5;
+        }
+
+        .editable {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-mode" onclick="toggleDarkMode()" aria-label="Alternar modo escuro" aria-pressed="false">🌙</button>
+    <header>
+        <h1>Agenda Escolar Interativa</h1>
+    </header>
+    <main>
+        <input type="text" id="searchInput" placeholder="Pesquisar disciplina..." oninput="highlightSubjects()">
+        <section class="agenda-container">
+            <table class="agenda">
+                <thead>
+                    <tr class="header">
+                        <th>Horário</th>
+                        <th>Segunda-feira</th>
+                        <th>Terça-feira</th>
+                        <th>Quarta-feira</th>
+                        <th>Quinta-feira</th>
+                        <th>Sexta-feira</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="portao">
+                        <td>07:45</td>
+                        <td colspan="5">Abertura dos portões</td>
+                    </tr>
+                    <tr>
+                        <td>08:00 - 08:50</td>
+                        <td class="editable">Matemática</td>
+                        <td class="editable">Português</td>
+                        <td class="editable">História</td>
+                        <td class="editable">Geografia</td>
+                        <td class="editable">Inglês</td>
+                    </tr>
+                    <tr>
+                        <td>08:50 - 09:40</td>
+                        <td class="editable">Ciências</td>
+                        <td class="editable">Educação Física</td>
+                        <td class="editable">Química</td>
+                        <td class="editable">Física</td>
+                        <td class="editable">Biologia</td>
+                    </tr>
+                    <tr class="intervalo-azul">
+                        <td>09:40 - 09:55</td>
+                        <td colspan="5">Intervalo</td>
+                    </tr>
+                    <tr>
+                        <td>09:55 - 10:45</td>
+                        <td class="editable">Artes</td>
+                        <td class="editable">Matemática</td>
+                        <td class="editable">Geografia</td>
+                        <td class="editable">História</td>
+                        <td class="editable">Ciências</td>
+                    </tr>
+                    <tr>
+                        <td>10:45 - 11:35</td>
+                        <td class="editable">Português</td>
+                        <td class="editable">Inglês</td>
+                        <td class="editable">Física</td>
+                        <td class="editable">Química</td>
+                        <td class="editable">Biologia</td>
+                    </tr>
+                    <tr class="almoco">
+                        <td>12:25 - 13:25</td>
+                        <td colspan="5">Almoço</td>
+                    </tr>
+                    <!-- Horários após o almoço -->
+                    <tr>
+                        <td>13:25 - 14:15</td>
+                        <td class="editable">Matemática</td>
+                        <td class="editable">Português</td>
+                        <td class="editable">História</td>
+                        <td class="editable">Geografia</td>
+                        <td class="editable">Inglês</td>
+                    </tr>
+                    <tr>
+                        <td>14:15 - 15:05</td>
+                        <td class="editable">Ciências</td>
+                        <td class="editable">Educação Física</td>
+                        <td class="editable">Química</td>
+                        <td class="editable">Física</td>
+                        <td class="editable">Biologia</td>
+                    </tr>
+                    <tr class="intervalo-azul">
+                        <td>15:05 - 15:20</td>
+                        <td colspan="5">Intervalo</td>
+                    </tr>
+                    <tr>
+                        <td>15:20 - 16:10</td>
+                        <td class="editable">Artes</td>
+                        <td class="editable">Matemática</td>
+                        <td class="editable">Geografia</td>
+                        <td class="editable">História</td>
+                        <td class="editable">Ciências</td>
+                    </tr>
+                    <tr>
+                        <td>16:10 - 17:00</td>
+                        <td class="editable">Português</td>
+                        <td class="editable">Inglês</td>
+                        <td class="editable">Física</td>
+                        <td class="editable">Química</td>
+                        <td class="editable">Biologia</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <script>
+        const toggleButton = document.querySelector(".toggle-mode");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const isDarkMode = localStorage.getItem("darkMode") === "true";
+            document.body.classList.toggle("dark-mode", isDarkMode);
+            toggleButton.textContent = isDarkMode ? "☀️" : "🌙";
+            toggleButton.setAttribute("aria-pressed", isDarkMode);
+
+            const savedSearch = localStorage.getItem("searchTerm");
+            if (savedSearch) {
+                document.getElementById("searchInput").value = savedSearch;
+                highlightSubjects();
+            }
+
+            // Carregar matérias salvas no localStorage
+            loadSavedSubjects();
+        });
+
+        function toggleDarkMode() {
+            const isDarkMode = document.body.classList.toggle("dark-mode");
+            toggleButton.textContent = isDarkMode ? "☀️" : "🌙";
+            toggleButton.setAttribute("aria-pressed", isDarkMode);
+            localStorage.setItem("darkMode", isDarkMode);
+        }
+
+        function highlightSubjects() {
+            const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+            localStorage.setItem("searchTerm", searchTerm);
+            const cells = document.querySelectorAll(".agenda td");
+
+            cells.forEach(cell => {
+                if (!cell.dataset.originalBackground) {
+                    cell.dataset.originalBackground = window.getComputedStyle(cell).backgroundColor;
+                }
+
+                const cellText = cell.textContent.toLowerCase();
+                if (searchTerm && cellText.includes(searchTerm)) {
+                    cell.style.backgroundColor = "yellow"; // Destacar a célula
+                } else {
+                    // Restaura a cor de fundo original ou a cor da classe específica
+                    if (cell.classList.contains("intervalo")) {
+                        cell.style.backgroundColor = "var(--highlight-interval)";
+                    } else if (cell.classList.contains("almoco")) {
+                        cell.style.backgroundColor = "var(--highlight-lunch)";
+                    } else if (cell.classList.contains("intervalo-azul")) {
+                        cell.style.backgroundColor = "var(--highlight-interval-blue)";
+                    } else if (cell.classList.contains("portao")) {
+                        cell.style.backgroundColor = "var(--portao-bg)";
+                    } else {
+                        cell.style.backgroundColor = cell.dataset.originalBackground;
+                    }
+                }
+            });
+        }
+
+        // Função para editar matérias
+        function enableEditing() {
+            const editableCells = document.querySelectorAll(".editable");
+
+            editableCells.forEach(cell => {
+                cell.addEventListener("click", () => {
+                    const currentValue = cell.textContent;
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.value = currentValue;
+                    cell.textContent = "";
+                    cell.appendChild(input);
+                    input.focus();
+
+                    input.addEventListener("blur", () => {
+                        const newValue = input.value.trim();
+                        cell.textContent = newValue;
+                        saveSubject(cell);
+                    });
+
+                    input.addEventListener("keypress", (e) => {
+                        if (e.key === "Enter") {
+                            input.blur();
+                        }
+                    });
+                });
+            });
+        }
+
+        // Função para salvar a matéria no localStorage
+        function saveSubject(cell) {
+            const rowIndex = cell.parentElement.rowIndex;
+            const cellIndex = cell.cellIndex;
+            const key = `subject_${rowIndex}_${cellIndex}`;
+            localStorage.setItem(key, cell.textContent);
+        }
+
+        // Função para carregar matérias salvas no localStorage
+        function loadSavedSubjects() {
+            const editableCells = document.querySelectorAll(".editable");
+
+            editableCells.forEach(cell => {
+                const rowIndex = cell.parentElement.rowIndex;
+                const cellIndex = cell.cellIndex;
+                const key = `subject_${rowIndex}_${cellIndex}`;
+                const savedValue = localStorage.getItem(key);
+
+                if (savedValue) {
+                    cell.textContent = savedValue;
+                }
+            });
+        }
+
+        // Habilitar edição ao carregar a página
+        enableEditing();
+    </script>
+</body>
+</html>
